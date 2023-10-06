@@ -54,12 +54,14 @@ const addKambuhData = async (req, res) => {
         currentKambuhLast.end_time = new Date();
         currentKambuhLast.total_puff += 1;
         currentKambuhLast.kambuh_interval = currentKambuhLast.end_time - currentKambuhLast.start_time;
-        const timeDifference = new Date(currentKambuhLast.kambuh_interval).toISOString().substr(11, 8);
-    
+        const timeDifference = new Date(currentKambuhLast.kambuh_interval);
+        const hours = timeDifference.getHours();
+        const minutes = timeDifference.getMinutes();
+        const seconds = timeDifference.getSeconds();
+        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
        // const convertKambuhIntervalToTime = moment().format()
 
-
-        await pool.query(queries.updateKambuh, [currentKambuhLast.end_time, currentKambuhLast.total_puff, timeDifference, currentKambuhID]);
+        await pool.query(queries.updateKambuh, [currentKambuhLast.end_time, currentKambuhLast.total_puff, formattedTime, currentKambuhID]);
     
         res.status(201).json({
             message: 'Successfully'
