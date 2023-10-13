@@ -1,14 +1,14 @@
 const pool = require('../database/database');
 const queries = require('./query');
 
-const getKambuhData = (req, res, next) => {
+const getKambuhData = async (req, res, next) => {
     pool.query(queries.getAllKambuhData, (error, results) => {
         if (error) throw error
         res.status(200).json(results.rows);
     });
 };
 
-async function getKambuhById(req, res, next) {
+const getKambuhById = async (req, res, next) => {
     const id = req.params.kambuhid;
     pool.query(queries.findKambuhIdByPk, [id], (error, results) => {
         if (error) throw error;
@@ -54,14 +54,18 @@ const addKambuhData = async (req, res) => {
         currentKambuhLast.end_time = new Date();
         currentKambuhLast.total_puff += 1;
         currentKambuhLast.kambuh_interval = currentKambuhLast.end_time - currentKambuhLast.start_time;
-        const timeDifference = new Date(currentKambuhLast.kambuh_interval);
-        const hours = timeDifference.getHours();
-        const minutes = timeDifference.getMinutes();
-        const seconds = timeDifference.getSeconds();
-        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        console.log(currentKambuhLast.kambuh_interval);
+
+        // Extract to hours, minute, seconds
+        // const timeDifference = new Date(currentKambuhLast.kambuh_interval);
+        // const hours = timeDifference.getHours() - 7;
+        // const minutes = timeDifference.getMinutes();
+        // const seconds = timeDifference.getSeconds();
+        // const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         //const convertKambuhIntervalToTime = moment().format()
 
-        await pool.query(queries.updateKambuh, [currentKambuhLast.end_time, currentKambuhLast.total_puff, formattedTime, currentKambuhID]);
+        await pool.query(queries.updateKambuh, [currentKambuhLast.end_time, currentKambuhLast.total_puff, currentKambuhLast.kambuh_interval, currentKambuhID]);
     
         res.status(201).json({
             message: 'Successfully'

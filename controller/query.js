@@ -10,6 +10,12 @@ const getKambuhById = 'SELECT * FROM kambuhs WHERE kambuhid = $1';
 const findKambuhIdByPk = 'SELECT * FROM kambuhs WHERE kambuh_id = $1';
 const updateKambuh = 'UPDATE kambuhs SET end_time = $1, total_puff = $2, kambuh_interval = $3 WHERE kambuh_id = $4';
 
+// User
+const addUserData = 'INSERT INTO users (email, "password", dob) VALUES ($1, $2, $3::date)';
+const getAllUserData = 'SELECT * FROM users';
+const checkEmailExists = 'SELECT email FROM users WHERE email = $1';
+const getUserDataByEmail = 'SELECT * FROM users WHERE email = $1'
+
 module.exports = {
     getAllKambuhData,
     getKambuhById,
@@ -19,4 +25,8 @@ module.exports = {
     getLastPuffResult,
     findKambuhIdByPk,
     updateKambuh,
+    addUserData,
+    getAllUserData,
+    checkEmailExists,
+    getUserDataByEmail,
 }
