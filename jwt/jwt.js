@@ -8,7 +8,7 @@ const createToken = async (user) => {
         {email: user.rows[0].email, user_id: user.rows[0].user_id },
         process.env.JWT_KEY
     );
-    console.log(accessToken);
+    // console.log(accessToken);
   //  console.log(process.env.JWT_KEY);
     return accessToken
 }
@@ -17,14 +17,15 @@ const createToken = async (user) => {
 const validateToken = async (req, res, next) => {
 
     const accessToken = req.cookies["access-token"];
-    const cookie = accessToken.split('=')[1];
+   // const cookie = accessToken[1];
 
     if (!accessToken){
         return res.status(401).json({ error: 'User not authenticated' });
     }
 
     try {
-        const validToken = await verify(cookie, process.env.JWT_KEY);
+        console.log('Access Token:', accessToken)
+        const validToken = await verify(accessToken, process.env.JWT_KEY);
         if (validToken) {
             req.authenticated = true;
             return next();

@@ -45,16 +45,20 @@ const userLogin = async (req, res) => {
         if(!match) {
            return res.status(400).json({ error: 'Invalid username or password'});
         } else {
+            console.log("creating token")
+            const accessToken = await createToken(user);
 
-            const accessToken = createToken(user);
+            console.log(accessToken);
 
-            // never
             res.cookie("access-token", accessToken, {
                 maxAge: 1000 * 60 * 60 * 24 * 365 * 20,
                 httpOnly: true
             });
-
-            res.json('User logged in');
+    
+            res.json({
+               message: 'User logged in',
+               accessToken: accessToken
+            });
         }
     } catch (error) {
         console.log(error);
