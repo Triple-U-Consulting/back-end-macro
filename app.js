@@ -28,7 +28,7 @@ app.use(cookieParser());
 // });
 
 //router
-app.use("/kambuh", kambuhRouter);
+app.use("/data", kambuhRouter);
 app.use("/auth", authRouter);
 
 // error handling
