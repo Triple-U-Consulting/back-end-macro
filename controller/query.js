@@ -24,6 +24,8 @@ const getUserDataByEmail = "SELECT * FROM users WHERE email = $1";
 const getAllInhalersData = "SELECT * FROM inhalers";
 const addInhalerData =
   "INSERT INTO inhalers (inhaler_id, inhaler_name) VALUES ($1, $2);";
+const updateInhalerData =
+  "UPDATE inhalers SET inhaler_name = $2 WHERE inhaler_id = $1";
 
 module.exports = {
   getAllKambuhData,
@@ -40,4 +42,5 @@ module.exports = {
   getUserDataByEmail,
   getAllInhalersData,
   addInhalerData,
+  updateInhalerData,
 };

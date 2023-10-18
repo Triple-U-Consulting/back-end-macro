@@ -30,7 +30,26 @@ const addInhalerData = async (req, res, next) => {
   }
 };
 
+const updateInhalerData = async (req, res, next) => {
+  try {
+    const inhaler_id = req.params.inhaler_id;
+    const { inhaler_name } = req.body;
+    await pool.query(queries.updateInhalerData, [inhaler_id, inhaler_name]);
+    res.status(200).json({
+      message: "Inhaler data updated successfully",
+    });
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({
+      error: {
+        message: error.message,
+      },
+    });
+  }
+};
+
 module.exports = {
   getInhalerData,
   addInhalerData,
+  updateInhalerData,
 };
