@@ -22,6 +22,8 @@ const getUserDataByEmail = "SELECT * FROM users WHERE email = $1";
 
 // Inhalers
 const getAllInhalersData = "SELECT * FROM inhalers";
+const addInhalerData =
+  "INSERT INTO inhalers (inhaler_id, inhaler_name) VALUES ($1, $2);";
 
 module.exports = {
   getAllKambuhData,
@@ -37,4 +39,5 @@ module.exports = {
   checkEmailExists,
   getUserDataByEmail,
   getAllInhalersData,
+  addInhalerData,
 };
