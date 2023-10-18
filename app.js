@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const app = express();
+const inhalerRouter = require("./api/router/inhalerRouter");
 const kambuhRouter = require("./api/router/kambuhRouter");
 const authRouter = require("./api/router/authRouter");
 const cookieParser = require("cookie-parser");
@@ -30,6 +31,7 @@ app.use(cookieParser());
 //router
 app.use("/data", kambuhRouter);
 app.use("/auth", authRouter);
+app.use("/", inhalerRouter);
 
 // error handling
 // declare error

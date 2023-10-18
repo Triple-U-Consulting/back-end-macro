@@ -89,17 +89,9 @@ const getPuffData = async (req, res, next) => {
   });
 };
 
-const getInhalersData = async (req, res, next) => {
-  pool.query(queries.getAllInhalersData, (error, results) => {
-    if (error) throw error;
-    res.status(200).json(results.rows);
-  });
-};
-
 module.exports = {
   getKambuhData,
   getKambuhById,
   addKambuhData,
   getPuffData,
-  getInhalersData,
 };
