@@ -13,12 +13,12 @@ const userRegister = async (req, res) => {
         // check if email exists
         const result = await pool.query(queries.checkEmailExists, [email]);
         if(result.rows.length) {
-            res.status(400).json({ error: 'Email already registered' });
+            res.status(400).json([{ error: 'Email already registered' }]);
         } else if (password !== confirmPassword) { // check if password not equal with confirm password
-            res.status(400).json({ error: 'Not match password'});
+            res.status(400).json([{ error: 'Not match password'}]);
         } else {
             await pool.query(queries.addUserData, [email, hash, dob]);
-            res.status(201).json({ message: 'User registered' });
+            res.status(201).json([{ message: 'User registered' }]);
         }
     } catch(error) {
         console.log(error);
@@ -36,14 +36,14 @@ const userLogin = async (req, res) => {
 
         const user = await pool.query(queries.getUserDataByEmail, [email])
         if(!user.rows.length) { 
-            return res.status(400).json({ error: "User doesn't exists"});
+            return res.status(400).json([{ error: "User doesn't exists"}]);
         }
 
         // check if req password and db password match
         const dbPassword = user.rows[0].password;
         const match = await bcrypt.compare(password, dbPassword);
         if(!match) {
-           return res.status(400).json({ error: 'Invalid username or password'});
+           return res.status(400).json([{ error: 'Invalid username or password'}]);
         } else {
             console.log("creating token")
             const accessToken = await createToken(user);
@@ -55,10 +55,10 @@ const userLogin = async (req, res) => {
                 httpOnly: true
             });
     
-            res.json({
+            res.json([{
                message: 'User logged in',
                accessToken: accessToken
-            });
+            }]);
         }
     } catch (error) {
         console.log(error);
@@ -80,7 +80,7 @@ const getAllUserData = async (req, res) => {
 }
 
 const mockTest = (req, res) => {
-    res.json("profile");
+    res.json(["profile"]);
 }
 
 module.exports = {
