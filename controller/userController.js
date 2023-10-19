@@ -36,14 +36,20 @@ const userLogin = async (req, res) => {
 
         const user = await pool.query(queries.getUserDataByEmail, [email])
         if(!user.rows.length) { 
-            return res.status(400).json([{ error: "User doesn't exists"}]);
+            return res.status(400).json([{
+                 error: "User doesn't exists",
+                 accessToken: null
+                }]);
         }
 
         // check if req password and db password match
         const dbPassword = user.rows[0].password;
         const match = await bcrypt.compare(password, dbPassword);
         if(!match) {
-           return res.status(400).json([{ error: 'Invalid username or password'}]);
+           return res.status(400).json([{ 
+                error: 'Invalid username or password',
+                accessToken: null
+            }]);
         } else {
             console.log("creating token")
             const accessToken = await createToken(user);
