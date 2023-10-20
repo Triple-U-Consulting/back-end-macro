@@ -1,6 +1,6 @@
 // Puff
 const addPuffData =
-  "INSERT INTO puffs (kambuh_id, date_time) VALUES ($1, $2::timestamp)";
+  "INSERT INTO puffs (kambuh_id, date_time, inhaler_id) VALUES ($1, $2::timestamp, $3)";
 const getAllPuffData = "SELECT * FROM puffs";
 const getLastPuffResult = "SELECT * FROM puffs ORDER BY date_time DESC";
 

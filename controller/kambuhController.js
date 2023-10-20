@@ -21,6 +21,7 @@ const addKambuhData = async (req, res) => {
     const lastPuff = await pool.query(queries.getLastPuffResult);
     const lastPuffLast = lastPuff.rows[0];
     const now = new Date();
+    const { inhaler_id } = req.body;
 
     let currentKambuhID = 0;
 
@@ -40,6 +41,7 @@ const addKambuhData = async (req, res) => {
     const newPuff = await pool.query(queries.addPuffData, [
       currentKambuhID,
       now,
+      inhaler_id
     ]);
 
     // update row
