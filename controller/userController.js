@@ -13,12 +13,12 @@ const userRegister = async (req, res) => {
         // check if email exists
         const result = await pool.query(queries.checkEmailExists, [email]);
         if(result.rows.length) {
-            res.status(400).json([{ error: 'Email already registered' }]);
+            res.status(400).json({ error: 'Email already registered' });
         } else if (password !== confirmPassword) { // check if password not equal with confirm password
-            res.status(400).json([{ error: 'Not match password'}]);
+            res.status(400).json({ error: 'Not match password'});
         } else {
             await pool.query(queries.addUserData, [email, hash, dob]);
-            res.status(201).json([{ message: 'User registered' }]);
+            res.status(201).json({ message: 'User registered' });
         }
     } catch(error) {
         console.log(error);
@@ -33,23 +33,24 @@ const userLogin = async (req, res) => {
 
     try {
         const { email, password } = req.body
+        console.log(email, password)
 
         const user = await pool.query(queries.getUserDataByEmail, [email])
         if(!user.rows.length) { 
-            return res.status(400).json([{
+            return res.status(400).json({
                  error: "User doesn't exists",
                  accessToken: null
-                }]);
+                });
         }
 
         // check if req password and db password match
         const dbPassword = user.rows[0].password;
         const match = await bcrypt.compare(password, dbPassword);
         if(!match) {
-           return res.status(400).json([{ 
-                error: 'Invalid username or password',
+           return res.status(400).json({ 
+                message: 'Invalid username or password',
                 accessToken: null
-            }]);
+            });
         } else {
             console.log("creating token")
             const accessToken = await createToken(user);
@@ -61,14 +62,57 @@ const userLogin = async (req, res) => {
                 httpOnly: true
             });
     
-            res.json([{
+            res.json({
                message: 'User logged in',
                accessToken: accessToken
-            }]);
+            });
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: error.message });
+    }
+}
+
+const addInhalertoUser = async (req, res) => {
+    try {
+
+        const user_id = req.params.user_id;
+        const { inhaler_id }  = req.body;
+
+        const user = await pool.query(queries.getUserById, [user_id]);
+        if(!user.rows.length){
+            return res.status(400).json({
+                error: "User doesn't exists",
+                //accessToken: null
+               });
+        }
+    
+        await pool.query(queries.updateInhalerToUser, [ user_id, inhaler_id ]);
+        res.status(200).json({
+            message: 'Updatted inhaler to user',
+            result: inhaler_id
+        });
+    
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: error.message })
+    }
+}
+
+const getUserDataById = async (req, res) => {
+    try{
+        const user_id = req.params.user_id;
+        const user = await pool.query(queries.getUserById, [user_id]);
+        if(!user.rows.length){
+            return res.status(400).json({
+                error: "User doesn't exists",
+                accessToken: null
+               });
+        }
+        res.status(200).json({ result: user.rows})
+    } catch (error){
+        console.log(error);
+        res.status(500).json({ message: error.message });
     }
 }
 
@@ -76,11 +120,12 @@ const getAllUserData = async (req, res) => {
 
     try {
         const result = await pool.query(queries.getAllUserData);
-
-        res.status(200).json(result.rows);
+        res.status(200).json({
+            result: result.rows
+        });
     }catch (error) {
         console.log(error)
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message : error.message });
     }
 
 }
@@ -94,4 +139,6 @@ module.exports = {
     getAllUserData,
     userLogin,
     mockTest,
+    addInhalertoUser,
+    getUserDataById
 }

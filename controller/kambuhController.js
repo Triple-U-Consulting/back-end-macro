@@ -4,7 +4,7 @@ const queries = require("./query");
 const getKambuhData = async (req, res, next) => {
   pool.query(queries.getAllKambuhData, (error, results) => {
     if (error) throw error;
-    res.status(200).json(results.rows);
+    res.status(200).json({ message: results.rows });
   });
 };
 
@@ -12,7 +12,7 @@ const getKambuhById = async (req, res, next) => {
   const id = req.params.kambuhid;
   pool.query(queries.findKambuhIdByPk, [id], (error, results) => {
     if (error) throw error;
-    res.status(200).json(results.rows);
+    res.status(200).json({ message: results.rows } );
   });
 };
 
@@ -75,9 +75,7 @@ const addKambuhData = async (req, res) => {
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({
-      error: {
-        message: error.message,
-      },
+      message: error.message
     });
   }
 };
@@ -85,7 +83,7 @@ const addKambuhData = async (req, res) => {
 const getPuffData = async (req, res, next) => {
   pool.query(queries.getAllPuffData, (error, results) => {
     if (error) throw error;
-    res.status(200).json(results.rows);
+    res.status(200).json({result: results.rows });
   });
 };
 

@@ -7,5 +7,7 @@ router.post("/register", controller.userRegister);
 router.get('/', controller.getAllUserData);
 router.post("/login", controller.userLogin);
 router.get("/profile", validateToken, controller.mockTest);
+router.put('/update/inhaler/:user_id', controller.addInhalertoUser);
+//router.get("/:user_id", controller.getUserDataById);
 
 module.exports = router;

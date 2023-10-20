@@ -19,11 +19,13 @@ const addUserData =
 const getAllUserData = "SELECT * FROM users";
 const checkEmailExists = "SELECT email FROM users WHERE email = $1";
 const getUserDataByEmail = "SELECT * FROM users WHERE email = $1";
+const updateInhalerToUser = 'UPDATE users SET inhaler_id = $2 WHERE user_id = $1'
+const getUserById = 'SELECT * FROM users WHERE user_id = $1'
 
 // Inhalers
 const getAllInhalersData = "SELECT * FROM inhalers";
 const addInhalerData =
-  "INSERT INTO inhalers (inhaler_id, inhaler_name) VALUES ($1, $2);";
+  "INSERT INTO inhalers (inhaler_id) VALUES ($1);";
 const updateInhalerData =
   "UPDATE inhalers SET inhaler_name = $2 WHERE inhaler_id = $1";
 
@@ -43,4 +45,6 @@ module.exports = {
   getAllInhalersData,
   addInhalerData,
   updateInhalerData,
+  updateInhalerToUser,
+  getUserById,
 };
