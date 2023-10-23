@@ -1,6 +1,7 @@
 const pool = require('../database/database');
 const queries = require('./query');
 const bcrypt = require('bcrypt');
+const jwt_decode = require('jwt-decode');
 const { createToken, validateToken } = require('../jwt/jwt');
 const saltRounds = 10;
 
@@ -63,8 +64,7 @@ const userLogin = async (req, res) => {
             });
     
             res.json({
-               message: 'User logged in',
-               accessToken: accessToken
+               message: accessToken
             });
         }
     } catch (error) {
@@ -76,8 +76,12 @@ const userLogin = async (req, res) => {
 const addInhalertoUser = async (req, res) => {
     try {
 
-        const user_id = req.params.user_id;
+        const token = req.headers.accesstoken;
         const { inhaler_id }  = req.body;
+
+        const decoded = jwt_decode(token);
+        const user_id = decoded.user_id
+        console.log(user_id);
 
         const user = await pool.query(queries.getUserById, [user_id]);
         if(!user.rows.length){
@@ -89,13 +93,13 @@ const addInhalertoUser = async (req, res) => {
     
         await pool.query(queries.updateInhalerToUser, [ user_id, inhaler_id ]);
         res.status(200).json({
-            message: 'Updatted inhaler to user',
+            message: 'Updated inhaler to user',
             result: inhaler_id
         });
     
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: error.message })
+        res.status(400).json({ message: error.message })
     }
 }
 

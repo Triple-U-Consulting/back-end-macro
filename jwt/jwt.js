@@ -3,13 +3,13 @@ require('dotenv').config();
 
 // Create JWT Token
 const createToken = async (user) => {
-
+    
     const accessToken = sign(
         {email: user.rows[0].email, user_id: user.rows[0].user_id },
         process.env.JWT_KEY
     );
     // console.log(accessToken);
-  //  console.log(process.env.JWT_KEY);
+    // console.log(process.env.JWT_KEY);
     return accessToken
 }
 
