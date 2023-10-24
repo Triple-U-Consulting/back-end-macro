@@ -6,7 +6,9 @@ const createToken = async (user) => {
     
     const accessToken = sign(
         {email: user.rows[0].email, user_id: user.rows[0].user_id },
-        process.env.JWT_KEY
+        process.env.JWT_KEY, {
+            expiresIn: process.env.JWT_EXPIRES_IN
+        }
     );
     // console.log(accessToken);
     // console.log(process.env.JWT_KEY);
