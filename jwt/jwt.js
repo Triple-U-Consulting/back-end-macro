@@ -4,8 +4,12 @@ require('dotenv').config();
 // Create JWT Token
 const createToken = async (user) => {
     
-    const accessToken = sign(
-        {email: user.rows[0].email, user_id: user.rows[0].user_id },
+    const accessToken = sign({
+        user_id: user.rows[0].user_id,
+        inhaler_id: user.rows[0].inhaler_id,
+        email: user.rows[0].email,
+        password: user.rows[0].password,
+        dob: user.rows[0].dob},
         process.env.JWT_KEY, {
             expiresIn: process.env.JWT_EXPIRES_IN
         }
