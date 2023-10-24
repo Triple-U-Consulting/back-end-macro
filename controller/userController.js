@@ -55,7 +55,7 @@ const userLogin = async (req, res) => {
             console.log("creating token")
             const accessToken = await createToken(user);
 
-            console.log(accessToken);
+           // console.log(accessToken);
 
             res.cookie("access-token", accessToken, {
                 maxAge: 1000 * 60 * 60 * 24 * 365 * 20,
