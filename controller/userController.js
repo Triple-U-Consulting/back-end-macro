@@ -8,15 +8,13 @@ const saltRounds = 10;
 const userRegister = async (req, res) => {
    
     try {
-        const { email, password, dob, confirmPassword } = req.body
+        const { email, password, dob } = req.body
         const hash = await bcrypt.hash(password, saltRounds);
 
         // check if email exists
         const result = await pool.query(queries.checkEmailExists, [email]);
         if(result.rows.length) {
             res.status(400).json({ error: 'Email already registered' });
-        } else if (password !== confirmPassword) { // check if password not equal with confirm password
-            res.status(400).json({ error: 'Not match password'});
         } else {
             await pool.query(queries.addUserData, [email, hash, dob]);
             res.status(201).json({ message: 'User registered' });
