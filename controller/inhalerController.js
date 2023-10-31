@@ -44,8 +44,37 @@ const updateInhalerData = async (req, res, next) => {
   }
 };
 
+const updateBottleInhaler = async (req, res, next) => {
+  try {
+    const inhaler_id = req.params.inhaler_id;
+    const { remaining_puff } = req.body;
+    const now = new Date();
+
+    if(!inhaler_id) {
+      return res.status(400).json({ message: 'inhaler_id is required'});
+    } else {
+      const inhaler = await pool.query(queries.getInhalerById, [inhaler_id]);
+      if (!inhaler.rows.length) {
+        return res.status(400).json({ message: 'No Data inhaler'});
+      } else {
+        await pool.query(queries.updateBottleInhaler, [now,  remaining_puff, inhaler_id]);
+        return res.status(200).json({
+          message: 'Inhaler bottle update succesfully',
+          data: inhaler.rows
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
 module.exports = {
   getInhalerData,
   addInhalerData,
   updateInhalerData,
+  updateBottleInhaler
 };

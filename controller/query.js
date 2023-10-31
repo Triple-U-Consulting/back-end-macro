@@ -24,10 +24,13 @@ const getUserById = 'SELECT * FROM users WHERE user_id = $1'
 
 // Inhalers
 const getAllInhalersData = "SELECT * FROM inhalers";
+const getInhalerById = "SELECT * FROM inhalers WHERE inhaler_id = $1"
 const addInhalerData =
   "INSERT INTO inhalers (inhaler_id) VALUES ($1);";
 const updateInhalerData =
   "UPDATE inhalers SET inhaler_name = $2 WHERE inhaler_id = $1";
+const updateBottleInhaler = 
+  "UPDATE inhalers SET change_date = $1, remaining_puff = $2 WHERE inhaler_id = $3";
 
 module.exports = {
   getAllKambuhData,
@@ -47,4 +50,6 @@ module.exports = {
   updateInhalerData,
   updateInhalerToUser,
   getUserById,
+  updateBottleInhaler,
+  getInhalerById,
 };

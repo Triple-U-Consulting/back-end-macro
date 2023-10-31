@@ -2,7 +2,7 @@ const pool = require('../database/database');
 const queries = require('./query');
 const bcrypt = require('bcrypt');
 const jwt_decode = require('jwt-decode');
-const { createToken, validateToken } = require('../jwt/jwt');
+const { createToken } = require('../jwt/jwt');
 const saltRounds = 10;
 
 const userRegister = async (req, res) => {
@@ -34,7 +34,7 @@ const userLogin = async (req, res) => {
 
     try {
         const { email, password } = req.body
-        console.log(email, password)
+        //console.log(email, password)
 
         const user = await pool.query(queries.getUserDataByEmail, [email])
         if(!user.rows.length) { 
@@ -56,7 +56,7 @@ const userLogin = async (req, res) => {
             console.log("creating token")
             const accessToken = await createToken(user);
 
-            console.log(accessToken);
+            //console.log(accessToken);
 
             res.cookie("access-token", accessToken, {
                 maxAge: 1000 * 60 * 60 * 24 * 365 * 20,
@@ -81,7 +81,7 @@ const addInhalertoUser = async (req, res) => {
 
         const decoded = jwt_decode(token);
         const user_id = decoded.user_id
-        console.log(user_id);
+        //console.log(user_id);
 
         const user = await pool.query(queries.getUserById, [user_id]);
         if(!user.rows.length){
@@ -125,7 +125,8 @@ const getAllUserData = async (req, res) => {
     try {
         const result = await pool.query(queries.getAllUserData);
         res.status(200).json({
-            result: result.rows
+            result: result.rows,
+            //id: result.rows[0].user_id
         });
     }catch (error) {
         console.log(error)
