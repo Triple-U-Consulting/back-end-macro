@@ -8,7 +8,7 @@ const kambuhRouter = require("./api/router/kambuhRouter");
 const authRouter = require("./api/router/authRouter");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const errorHandler = require('./middleware/errorHandler');
+//const errorHandler = require('./middleware/errorHandler');
 require("dotenv").config();
 
 //middlewate
@@ -50,6 +50,7 @@ app.use((error, req, res, next) => {
       message: 'Not Found'
     }
   });
+  console.log(error);
 });
 
 module.exports = app;
