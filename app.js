@@ -44,6 +44,12 @@ app.use((req, res, next) => {
   next(error);
 });
 
-app.use(errorHandler);
+app.use((error, req, res, next) => {
+  res.status(error.status || 500).json({
+    error: {
+      message: 'Not Found'
+    }
+  });
+});
 
 module.exports = app;
