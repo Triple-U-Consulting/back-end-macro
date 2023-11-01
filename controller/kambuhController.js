@@ -16,7 +16,7 @@ const getKambuhById = async (req, res, next) => {
   });
 };
 
-const addKambuhData = async (req, res) => {
+const addKambuhData =  async (req, res) => {
   try {
     const lastPuff = await pool.query(queries.getLastPuffResult);
     const lastPuffLast = lastPuff.rows[0];
