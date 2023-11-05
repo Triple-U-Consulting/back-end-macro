@@ -10,19 +10,13 @@ const userRegister = async (req, res) => {
     const { email, password, dob } = req.body;
     const hash = await bcrypt.hash(password, saltRounds);
 
-        // check if email exists
-        const result = await pool.query(queries.checkEmailExists, [email]);
-        if(result.rows.length) {
-            res.status(400).json({ message: 'Email already registered' });
-        } else {
-            await pool.query(queries.addUserData, [email, hash, dob]);
-            res.status(201).json({ message: 'User registered' });
-        }
-    } catch(error) {
-        console.log(error);
-        if (error) {
-            res.status(500).json({ message: error.message });
-        }
+    // check if email exists
+    const result = await pool.query(queries.checkEmailExists, [email]);
+    if(result.rows.length) {
+        res.status(400).json({ message: 'Email already registered' });
+    } else {
+        await pool.query(queries.addUserData, [email, hash, dob]);
+        res.status(201).json({ message: 'User registered' });
     }
   } catch (error) {
     console.log(error);
