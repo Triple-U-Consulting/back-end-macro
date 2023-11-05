@@ -8,6 +8,26 @@ const getKambuhData = async (req, res, next) => {
   });
 };
 
+const updateKambuhCondition = async (req, res, next) => {
+  try {
+    const { allValuesToUpdate } = req.body;
+    allValuesToUpdate.forEach(kambuh => {
+      const kambuh_id = kambuh["kambuh_id"];
+      const trigger = kambuh["trigger"];
+      const scale = kambuh["scale"];
+      pool.query(queries.updateKambuhCondition, [scale, trigger, kambuh_id])
+    });
+
+    res.status(201).json({ message: "kambuh conditions updated "})
+    
+  } catch {
+    console.log(error);
+    if (error) {
+        res.status(500).json({ error: error.message });
+    }
+  }
+}
+
 const getKambuhById = async (req, res, next) => {
   const id = req.params.kambuhid;
   pool.query(queries.findKambuhIdByPk, [id], (error, results) => {
@@ -85,7 +105,7 @@ const addKambuhData =  async (req, res) => {
 const getPuffData = async (req, res, next) => {
   pool.query(queries.getAllPuffData, (error, results) => {
     if (error) throw error;
-    res.status(200).json({result: results.rows });
+    res.status(200).json({result: results.rows});
   });
 };
 
@@ -93,5 +113,6 @@ module.exports = {
   getKambuhData,
   getKambuhById,
   addKambuhData,
+  updateKambuhCondition,
   getPuffData,
 };

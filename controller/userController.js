@@ -14,7 +14,7 @@ const userRegister = async (req, res) => {
         // check if email exists
         const result = await pool.query(queries.checkEmailExists, [email]);
         if(result.rows.length) {
-            res.status(400).json({ error: 'Email already registered' });
+            res.status(400).json({ message: 'Email already registered' });
         } else {
             await pool.query(queries.addUserData, [email, hash, dob]);
             res.status(201).json({ message: 'User registered' });
@@ -22,7 +22,7 @@ const userRegister = async (req, res) => {
     } catch(error) {
         console.log(error);
         if (error) {
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
@@ -119,7 +119,6 @@ const getUserDataById = async (req, res) => {
 }
 
 const getAllUserData = async (req, res) => {
-
     try {
         const result = await pool.query(queries.getAllUserData);
         res.status(200).json({

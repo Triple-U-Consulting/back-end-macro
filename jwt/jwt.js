@@ -22,11 +22,11 @@ const createToken = async (user) => {
 // Verify token
 const validateToken = async (req, res, next) => {
 
-    const accessToken = req.cookies["access-token"];
+    const accessToken = req.headers.accesstoken;
    // const cookie = accessToken[1];
 
     if (!accessToken){
-        return res.status(401).json({ error: 'User not authenticated' });
+        return res.status(401).json({ message: 'User not authenticated' });
     }
 
     try {
@@ -38,7 +38,7 @@ const validateToken = async (req, res, next) => {
         } 
     } catch (error){
         console.log(error);
-        return res.status(401).json({ error: error.message });
+        return res.status(401).json({ message: error.message });
     }
 
 }

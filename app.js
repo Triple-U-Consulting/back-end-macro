@@ -6,6 +6,7 @@ const app = express();
 const inhalerRouter = require("./api/router/inhalerRouter");
 const kambuhRouter = require("./api/router/kambuhRouter");
 const authRouter = require("./api/router/authRouter");
+const pageRouter = require("./api/router/pageRouter");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const errorHandler = require('./middleware/errorHandler');
@@ -30,6 +31,7 @@ app.use(cookieParser());
 // });
 
 //router
+app.use("/page", pageRouter);
 app.use("/data", kambuhRouter);
 app.use("/auth", authRouter);
 app.use("/", inhalerRouter);

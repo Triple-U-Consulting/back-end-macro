@@ -7,5 +7,6 @@ router.get("/kambuh", controller.getKambuhData);
 router.post("/puff", controller.addKambuhData);
 router.get("/puff", controller.getPuffData);
 // router.get("/inhalers", controller.getInhalersData);
+router.put("/kambuh/update", controller.updateKambuhCondition);
 
 module.exports = router;
