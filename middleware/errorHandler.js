@@ -8,10 +8,17 @@ const devError = (res, error) => {
 }
 
 const prodError = (res, error) => {
-    res.status(error.statusCode).json({
-        status: error.statusCode,
-        message: error.message,
-    })
+    if(error.isOperational){
+        res.status(error.statusCode).json({
+            status: error.statusCode,
+            message: error.message,
+        });
+    } else {
+        res.status(500).json({
+            status: 'error',
+            message: 'Something went wrong!!'
+        })
+    }
 }
 
 const errorHandler = (error, req, res, next) => {

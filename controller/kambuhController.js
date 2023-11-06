@@ -54,7 +54,7 @@ const addKambuhData =  async (req, res) => {
     currentKambuhLast.kambuh_interval =
       currentKambuhLast.end_time - currentKambuhLast.start_time;
 
-    console.log(currentKambuhLast.kambuh_interval);
+    //console.log(currentKambuhLast.kambuh_interval);
 
     // Extract to hours, minute, seconds
     // const timeDifference = new Date(currentKambuhLast.kambuh_interval);
@@ -82,6 +82,45 @@ const addKambuhData =  async (req, res) => {
   }
 };
 
+const getKambuhDataByDate = async (req, res) => {
+  try {
+    const { date } = req.body
+    //let currentDate = date.toJSON().slice(0, 10);
+    console.log(date);
+    const kambuhData = await pool.query(queries.getKambuhDataByDate, [date]);
+   console.log(kambuhData.rows);
+    if(!kambuhData.rows.length){
+      return res.status(200).json({ results: "No Data Available"});
+    } 
+    return res.status(200).json({
+      results: kambuhData.rows
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
+const updateCondition = async (req, res, next) => {
+  try {
+    const { allValuetoUpdate } = req.body;
+    allValuetoUpdate.forEach(kambuh => {
+      const kambuh_id = kambuh["kambuh_id"];
+      const scale = kambuh["scale"];
+      const trigger = kambuh["trigger"];
+      pool.query(queries.updateKambuhCondition, [scale, trigger, kambuh_id]);
+    });
+    res.status(201).json({
+      message: 'Updatted condition'
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: error.message
+    })
+  }
+}
+
 const getPuffData = async (req, res, next) => {
   pool.query(queries.getAllPuffData, (error, results) => {
     if (error) throw error;
@@ -94,4 +133,6 @@ module.exports = {
   getKambuhById,
   addKambuhData,
   getPuffData,
+  updateCondition,
+  getKambuhDataByDate
 };

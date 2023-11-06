@@ -12,6 +12,12 @@ const getKambuhById = "SELECT * FROM kambuhs WHERE kambuhid = $1";
 const findKambuhIdByPk = "SELECT * FROM kambuhs WHERE kambuh_id = $1";
 const updateKambuh =
   "UPDATE kambuhs SET end_time = $1, total_puff = $2, kambuh_interval = $3 WHERE kambuh_id = $4";
+const updateKambuhCondition = 
+"UPDATE kambuhs SET scale = $1, trigger = $2 WHERE kambuh_id = $3";
+const getKambuhDataByDate = 
+`SELECT *
+FROM kambuhs
+WHERE date_trunc('day', start_time::date) = date_trunc('day', $1::date)`;
 
 // User
 const addUserData =
@@ -20,7 +26,7 @@ const getAllUserData = "SELECT * FROM users";
 const checkEmailExists = "SELECT email FROM users WHERE email = $1";
 const getUserDataByEmail = "SELECT * FROM users WHERE email = $1";
 const updateInhalerToUser = 'UPDATE users SET inhaler_id = $2 WHERE user_id = $1'
-const getUserById = 'SELECT * FROM users WHERE user_id = $1'
+const getUserById = 'SELECT * FROM users WHERE user_id >= $1'
 
 // Inhalers
 const getAllInhalersData = "SELECT * FROM inhalers";
@@ -30,7 +36,7 @@ const addInhalerData =
 const updateInhalerData =
   "UPDATE inhalers SET inhaler_name = $2 WHERE inhaler_id = $1";
 const updateBottleInhaler = 
-  "UPDATE inhalers SET change_date = $1, remaining_puff = $2 WHERE inhaler_id = $3";
+  `UPDATE inhalers SET change_date = $1, emaining_puff = $2 WHERE inhaler_id = $3`;
 
 module.exports = {
   getAllKambuhData,
@@ -52,4 +58,6 @@ module.exports = {
   getUserById,
   updateBottleInhaler,
   getInhalerById,
+  updateKambuhCondition,
+  getKambuhDataByDate,
 };
