@@ -3,6 +3,11 @@ const addPuffData =
   "INSERT INTO puffs (kambuh_id, date_time, inhaler_id) VALUES ($1, $2::timestamp, $3)";
 const getAllPuffData = "SELECT * FROM puffs";
 const getLastPuffResult = "SELECT * FROM puffs ORDER BY date_time DESC";
+const getTodaysPuff = "SELECT CAST(COUNT(*) AS INT) AS today FROM puffs WHERE DATE(date_time) = DATE(NOW())"
+const getAllPuffSinceDate = "SELECT COUNT(*) AS total FROM puffs WHERE date_time >= $1"
+
+// TODO: - query logic still questionable
+const getWeekAvgPuff = "SELECT CAST(COUNT(*) AS FLOAT) / EXTRACT(DAY FROM (puffs.date_time - sub.week_start)) AS average FROM puffs JOIN (SELECT DATE_TRUNC('week', date_time) AS week_start FROM puffs) AS sub ON sub.week_start = DATE_TRUNC('week', puffs.date_time) GROUP BY sub.week_start, puffs.date_time ORDER BY sub.week_start LIMIT 1"
 
 // Kambuh
 const addKambuhData =
@@ -36,7 +41,8 @@ const addInhalerData =
 const updateInhalerData =
   "UPDATE inhalers SET inhaler_name = $2 WHERE inhaler_id = $1";
 const updateBottleInhaler = 
-  `UPDATE inhalers SET change_date = $1, emaining_puff = $2 WHERE inhaler_id = $3`;
+  "UPDATE inhalers SET change_date = $1, remaining_puff = $2 WHERE inhaler_id = $3";
+const getInhalerLastChanged = "SELECT change_date FROM inhalers WHERE inhaler_id = $1"
 
 module.exports = {
   getAllKambuhData,
@@ -45,8 +51,13 @@ module.exports = {
   getAllPuffData,
   addPuffData,
   getLastPuffResult,
+  getTodaysPuff,
+  getAllPuffSinceDate,
+  getWeekAvgPuff,
+  getInhalerLastChanged,
   findKambuhIdByPk,
   updateKambuh,
+  updateKambuhCondition,
   addUserData,
   getAllUserData,
   checkEmailExists,

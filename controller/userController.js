@@ -12,11 +12,11 @@ const userRegister = async (req, res) => {
 
     // check if email exists
     const result = await pool.query(queries.checkEmailExists, [email]);
-    if (result.rows.length) {
-      res.status(400).json({ error: "Email already registered" });
+    if(result.rows.length) {
+        res.status(400).json({ message: 'Email already registered' });
     } else {
-      await pool.query(queries.addUserData, [email, hash, dob]);
-      res.status(201).json({ message: "User registered" });
+        await pool.query(queries.addUserData, [email, hash, dob]);
+        res.status(201).json({ message: 'User registered' });
     }
   } catch (error) {
     console.log(error);
