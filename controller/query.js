@@ -32,6 +32,7 @@ const checkEmailExists = "SELECT email FROM users WHERE email = $1";
 const getUserDataByEmail = "SELECT * FROM users WHERE email = $1";
 const updateInhalerToUser = 'UPDATE users SET inhaler_id = $2 WHERE user_id = $1'
 const getUserById = 'SELECT * FROM users WHERE user_id >= $1'
+const getUserInhaler = 'SELECT inhaler_id FROM users WHERE user_id = $1'
 
 // Inhalers
 const getAllInhalersData = "SELECT * FROM inhalers";
@@ -67,6 +68,7 @@ module.exports = {
   updateInhalerData,
   updateInhalerToUser,
   getUserById,
+  getUserInhaler,
   updateBottleInhaler,
   getInhalerById,
   updateKambuhCondition,
