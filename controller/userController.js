@@ -49,7 +49,7 @@ const userLogin = async (req, res) => {
       });
     } else {
       console.log("creating token");
-      const accessToken = await createToken(user.user_id);
+      const accessToken = await createToken(user);
 
       //console.log(accessToken);
 
