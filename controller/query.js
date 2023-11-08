@@ -60,13 +60,13 @@ SELECT
   ds.day as start_date,
   ds.day as end_date,
   COALESCE(p.daytime_usage, 0) AS daytime_usage,
-  COALESCE(p.nighttime_usage, 0) AS nighttime_usage
+  COALESCE(p.night_usage, 0) AS night_usage
 FROM date_series ds
 LEFT JOIN (
   SELECT
     DATE_TRUNC('day', date_time)::date AS day,
     SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) AS daytime_usage,
-    SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) AS nighttime_usage
+    SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) AS night_usage
   FROM puffs
   WHERE date_time >= $1 - INTERVAL '6 days'
   AND date_time < $1 + INTERVAL '1 day'
@@ -125,8 +125,8 @@ months AS (
 ),
 puff_counts AS (
   SELECT DATE_TRUNC('day', date_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
+         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytime_usage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as night_usage
   FROM puffs
   WHERE date_time >= (SELECT start_of_year FROM date_range)
     AND date_time <= (SELECT end_of_year FROM date_range)
@@ -135,9 +135,9 @@ puff_counts AS (
 SELECT
   SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 1) AS label,
   m.month_start AS start_date,
-  m.month_end AS end_of_month,
-  COALESCE(SUM(pc.daytimeusage), 0) AS daytime_usage,
-  COALESCE(SUM(pc.nightusage), 0) AS night_usage
+  m.month_end AS end_date,
+  COALESCE(SUM(pc.daytime_usage), 0) AS daytime_usage,
+  COALESCE(SUM(pc.night_usage), 0) AS night_usage
 FROM months m
 LEFT JOIN puff_counts pc ON pc.puff_day_start >= m.month_start AND pc.puff_day_start <= m.month_end
 GROUP BY m.month_start, m.month_end
