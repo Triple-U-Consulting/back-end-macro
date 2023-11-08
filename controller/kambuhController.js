@@ -15,7 +15,7 @@ const updateCondition = async (req, res, next) => {
       const kambuh_id = kambuh["kambuh_id"];
       const scale = kambuh["scale"];
       const trigger = kambuh["trigger"];
-      
+
       pool.query(queries.updateKambuhCondition, [scale, trigger, kambuh_id]);
     });
     res.status(201).json({
@@ -33,11 +33,11 @@ const getKambuhById = async (req, res, next) => {
   const id = req.params.kambuhid;
   pool.query(queries.findKambuhIdByPk, [id], (error, results) => {
     if (error) throw error;
-    res.status(200).json({ message: results.rows } );
+    res.status(200).json({ message: results.rows });
   });
 };
 
-const addKambuhData =  async (req, res) => {
+const addKambuhData = async (req, res) => {
   try {
     const lastPuff = await pool.query(queries.getLastPuffResult);
     const lastPuffLast = lastPuff.rows[0];
@@ -62,7 +62,7 @@ const addKambuhData =  async (req, res) => {
     const newPuff = await pool.query(queries.addPuffData, [
       currentKambuhID,
       now,
-      inhaler_id
+      inhaler_id,
     ]);
 
     // update row
@@ -98,23 +98,23 @@ const addKambuhData =  async (req, res) => {
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };
 
 const getKambuhDataByDate = async (req, res) => {
   try {
-    const date = req.query.date
+    const date = req.query.date;
     //let currentDate = date.toJSON().slice(0, 10);
     console.log(date);
     const kambuhData = await pool.query(queries.getKambuhDataByDate, [date]);
-   console.log(kambuhData.rows);
-    if(!kambuhData.rows.length){
-      return res.status(200).json({ results: "No Data Available"});
-    } 
+    console.log(kambuhData.rows);
+    if (!kambuhData.rows.length) {
+      return res.status(200).json({ results: "No Data Available" });
+    }
     return res.status(200).json({
-      results: kambuhData.rows
+      results: kambuhData.rows,
     });
   } catch (error) {
     console.log(error);
@@ -124,43 +124,17 @@ const getKambuhDataByDate = async (req, res) => {
 
 const getKambuhDataByMonth = async (req, res) => {
   try {
-    const date = req.query.date
+    const date = req.query.date;
     //let currentDate = date.toJSON().slice(0, 10);
     console.log(date);
     const kambuhData = await pool.query(queries.getKambuhDataByMonth, [date]);
-   console.log(kambuhData.rows);
-    if(!kambuhData.rows.length){
-      return res.status(200).json({ results: "No Data Available"});
-    } 
+    console.log(kambuhData.rows);
+    if (!kambuhData.rows.length) {
+      return res.status(200).json({ results: "No Data Available" });
+    }
     return res.status(200).json({
-      results: kambuhData.rows
+      results: kambuhData.rows,
     });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const getWeeklyAnalytics = async (req, res) => {
-  const startDate = req.query.start_date;
-  const endDate = req.query.end_date;
-  const frequency = req.query.frequency;
-  if (!startDate || !endDate) {
-    return res.status(400).send("Harap tentukan tanggal awal dan akhir");
-  }
-
-  if (!frequency) {
-    return res.status(400).send("Tentukan frekuensi!");
-  }
-
-  try {
-    const analyticsData = await pool.query(queries.getWeeklyAnalytics, [
-      startDate,
-      endDate,
-      frequency,
-    ]);
-    console.log(analyticsData.rows);
-    res.json({ results: analyticsData.rows });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -174,6 +148,36 @@ const getPuffData = async (req, res, next) => {
   });
 };
 
+// Analytics
+const getAnalytics = async (req, res) => {
+  const startDate = req.query.start_date;
+  const frequency = req.query.frequency;
+  if (!startDate) {
+    return res.status(400).send("Harap tentukan tanggal awal!");
+  }
+
+  if (!frequency) {
+    return res.status(400).send("Tentukan frekuensi!");
+  }
+
+  if (frequency === "week") {
+    query = queries.getWeeklyAnalytics;
+  } else if (frequency === "month") {
+    query = queries.getMonthlyAnalytics;
+  } else if (frequency === "year") {
+    query = queries.getYearlyAnalytics;
+  }
+
+  try {
+    const analyticsData = await pool.query(query, [startDate]);
+    console.log(analyticsData.rows);
+    res.json({ results: analyticsData.rows });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getKambuhData,
   getKambuhById,
@@ -181,6 +185,6 @@ module.exports = {
   getPuffData,
   updateCondition,
   getKambuhDataByDate,
-  getWeeklyAnalytics,
   getKambuhDataByMonth,
+  getAnalytics,
 };

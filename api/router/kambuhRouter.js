@@ -12,6 +12,6 @@ router.get("/kambuh/month", controller.getKambuhDataByMonth);
 // router.get("/inhalers", controller.getInhalersData);
 
 // analytics
-router.get("/analytics", controller.getWeeklyAnalytics);
+router.get("/analytics", controller.getAnalytics);
 
 module.exports = router;
