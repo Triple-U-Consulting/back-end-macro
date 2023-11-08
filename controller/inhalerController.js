@@ -57,7 +57,7 @@ const updateBottleInhaler = async (req, res, next) => {
       if (!inhaler.rows.length) {
         return res.status(400).json({ message: 'No Data inhaler'});
       } else {
-        await pool.query(queries.updateBottleInhaler, [now,  remaining_puff, inhaler_id]);
+        await pool.query(queries.updateBottleInhaler, [now,  remaining_puff ? remaining_puff : 200, inhaler_id]);
         return res.status(200).json({
           message: 'Inhaler bottle update succesfully',
           data: inhaler.rows
