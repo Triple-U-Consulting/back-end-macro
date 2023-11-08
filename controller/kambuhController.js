@@ -122,6 +122,25 @@ const getKambuhDataByDate = async (req, res) => {
   }
 };
 
+const getKambuhDataByMonth = async (req, res) => {
+  try {
+    const date = req.query.date
+    //let currentDate = date.toJSON().slice(0, 10);
+    console.log(date);
+    const kambuhData = await pool.query(queries.getKambuhDataByMonth, [date]);
+   console.log(kambuhData.rows);
+    if(!kambuhData.rows.length){
+      return res.status(200).json({ results: "No Data Available"});
+    } 
+    return res.status(200).json({
+      results: kambuhData.rows
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getWeeklyAnalytics = async (req, res) => {
   const startDate = req.query.start_date;
   const endDate = req.query.end_date;
@@ -163,4 +182,5 @@ module.exports = {
   updateCondition,
   getKambuhDataByDate,
   getWeeklyAnalytics,
+  getKambuhDataByMonth,
 };

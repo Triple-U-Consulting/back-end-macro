@@ -25,6 +25,9 @@ const updateKambuhCondition =
 const getKambuhDataByDate = `SELECT *
 FROM kambuhs
 WHERE date_trunc('day', start_time::date) = date_trunc('day', $1::date)`;
+const getKambuhDataByMonth = 
+`SELECT * FROM kambuhs
+WHERE date_trunc('month', start_time::date) = date_trunc('month', $1::date)`;
 
 // User
 const addUserData =
@@ -94,4 +97,5 @@ module.exports = {
   updateKambuhCondition,
   getKambuhDataByDate,
   getWeeklyAnalytics,
+  getKambuhDataByMonth,
 };
