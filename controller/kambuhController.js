@@ -119,12 +119,38 @@ const getKambuhDataByDate = async (req, res) => {
     console.log(error);
     res.status(500).json({ message: error.message });
   }
-}
+};
+
+const getWeeklyAnalytics = async (req, res) => {
+  const startDate = req.query.start_date;
+  const endDate = req.query.end_date;
+  const frequency = req.query.frequency;
+  if (!startDate || !endDate) {
+    return res.status(400).send("Harap tentukan tanggal awal dan akhir");
+  }
+
+  if (!frequency) {
+    return res.status(400).send("Tentukan frekuensi!");
+  }
+
+  try {
+    const analyticsData = await pool.query(queries.getWeeklyAnalytics, [
+      startDate,
+      endDate,
+      frequency,
+    ]);
+    console.log(analyticsData.rows);
+    res.json({ results: analyticsData.rows });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const updateCondition = async (req, res, next) => {
   try {
     const { allValuetoUpdate } = req.body;
-    allValuetoUpdate.forEach(kambuh => {
+    allValuetoUpdate.forEach((kambuh) => {
       const kambuh_id = kambuh["kambuh_id"];
       const scale = kambuh["scale"];
       const trigger = kambuh["trigger"];
@@ -132,20 +158,20 @@ const updateCondition = async (req, res, next) => {
       pool.query(queries.updateKambuhCondition, [scale, trigger, kambuh_id]);
     });
     res.status(201).json({
-      message: 'Updatted condition'
+      message: "Updatted condition",
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: error.message
-    })
+      message: error.message,
+    });
   }
-}
+};
 
 const getPuffData = async (req, res, next) => {
   pool.query(queries.getAllPuffData, (error, results) => {
     if (error) throw error;
-    res.status(200).json({result: results.rows});
+    res.status(200).json({ result: results.rows });
   });
 };
 
@@ -156,5 +182,6 @@ module.exports = {
   updateKambuhCondition,
   getPuffData,
   updateCondition,
-  getKambuhDataByDate
+  getKambuhDataByDate,
+  getWeeklyAnalytics,
 };
