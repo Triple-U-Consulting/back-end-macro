@@ -111,7 +111,7 @@ const getKambuhDataByDate = async (req, res) => {
     const kambuhData = await pool.query(queries.getKambuhDataByDate, [date]);
     console.log(kambuhData.rows);
     if (!kambuhData.rows.length) {
-      return res.status(200).json({ results: "No Data Available" });
+      return res.status(200).json({ results: [] });
     }
     return res.status(200).json({
       results: kambuhData.rows,
@@ -130,7 +130,7 @@ const getKambuhDataByMonth = async (req, res) => {
     const kambuhData = await pool.query(queries.getKambuhDataByMonth, [date]);
     console.log(kambuhData.rows);
     if (!kambuhData.rows.length) {
-      return res.status(200).json({ results: "No Data Available" });
+      return res.status(200).json({ results: [] });
     }
     return res.status(200).json({
       results: kambuhData.rows,
