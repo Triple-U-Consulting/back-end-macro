@@ -104,7 +104,7 @@ const addKambuhData =  async (req, res) => {
 
 const getKambuhDataByDate = async (req, res) => {
   try {
-    const { date } = req.body
+    const date = req.query.date
     //let currentDate = date.toJSON().slice(0, 10);
     console.log(date);
     const kambuhData = await pool.query(queries.getKambuhDataByDate, [date]);
@@ -128,6 +128,7 @@ const updateCondition = async (req, res, next) => {
       const kambuh_id = kambuh["kambuh_id"];
       const scale = kambuh["scale"];
       const trigger = kambuh["trigger"];
+      
       pool.query(queries.updateKambuhCondition, [scale, trigger, kambuh_id]);
     });
     res.status(201).json({
