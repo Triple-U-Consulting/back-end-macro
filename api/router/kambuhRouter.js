@@ -9,7 +9,6 @@ router.get("/puff", controller.getPuffData);
 router.put("/update/condition", controller.updateCondition);
 router.get("/kambuh/date", controller.getKambuhDataByDate);
 // router.get("/inhalers", controller.getInhalersData);
-router.put("/kambuh/update", controller.updateKambuhCondition);
 
 // analytics
 router.get("/analytics", controller.getWeeklyAnalytics);

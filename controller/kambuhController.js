@@ -8,25 +8,26 @@ const getKambuhData = async (req, res, next) => {
   });
 };
 
-const updateKambuhCondition = async (req, res, next) => {
+const updateCondition = async (req, res, next) => {
   try {
-    const { allValuesToUpdate } = req.body;
-    allValuesToUpdate.forEach(kambuh => {
+    const { allValuetoUpdate } = req.body;
+    allValuetoUpdate.forEach((kambuh) => {
       const kambuh_id = kambuh["kambuh_id"];
-      const trigger = kambuh["trigger"];
       const scale = kambuh["scale"];
-      pool.query(queries.updateKambuhCondition, [scale, trigger, kambuh_id])
+      const trigger = kambuh["trigger"];
+      
+      pool.query(queries.updateKambuhCondition, [scale, trigger, kambuh_id]);
     });
-
-    res.status(201).json({ message: "kambuh conditions updated "})
-    
-  } catch {
+    res.status(201).json({
+      message: "Updatted condition",
+    });
+  } catch (error) {
     console.log(error);
-    if (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.status(500).json({
+      message: error.message,
+    });
   }
-}
+};
 
 const getKambuhById = async (req, res, next) => {
   const id = req.params.kambuhid;
@@ -147,27 +148,6 @@ const getWeeklyAnalytics = async (req, res) => {
   }
 };
 
-const updateCondition = async (req, res, next) => {
-  try {
-    const { allValuetoUpdate } = req.body;
-    allValuetoUpdate.forEach((kambuh) => {
-      const kambuh_id = kambuh["kambuh_id"];
-      const scale = kambuh["scale"];
-      const trigger = kambuh["trigger"];
-      
-      pool.query(queries.updateKambuhCondition, [scale, trigger, kambuh_id]);
-    });
-    res.status(201).json({
-      message: "Updatted condition",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
 const getPuffData = async (req, res, next) => {
   pool.query(queries.getAllPuffData, (error, results) => {
     if (error) throw error;
@@ -179,7 +159,6 @@ module.exports = {
   getKambuhData,
   getKambuhById,
   addKambuhData,
-  updateKambuhCondition,
   getPuffData,
   updateCondition,
   getKambuhDataByDate,
