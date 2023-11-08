@@ -25,8 +25,7 @@ const updateKambuhCondition =
 const getKambuhDataByDate = `SELECT *
 FROM kambuhs
 WHERE date_trunc('day', start_time::date) = date_trunc('day', $1::date)`;
-const getKambuhDataByMonth = 
-`SELECT * FROM kambuhs
+const getKambuhDataByMonth = `SELECT * FROM kambuhs
 WHERE date_trunc('month', start_time::date) = date_trunc('month', $1::date)`;
 
 // User
@@ -52,21 +51,98 @@ const getInhalerLastChanged =
   "SELECT change_date FROM inhalers WHERE inhaler_id = $1";
 
 // Analytics
-const getWeeklyAnalytics = `SELECT
-date_trunc($3, date_time) as start_date,
-CASE
-        WHEN $3 = 'day' THEN date_trunc($3, date_time) + interval '1 day' - interval '1 second'
-        WHEN $3 = 'week' THEN date_trunc($3, date_time) + interval '1 week' - interval '1 second'
-        WHEN $3 = 'month' THEN date_trunc($3, date_time) + interval '1 month' - interval '1 day'
-        WHEN $3 = 'year' THEN date_trunc($3, date_time) + interval '1 year' - interval '1 day'
-        ELSE date_trunc($3, date_time)
-    END as end_date,
-SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
-SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
-from puffs
-where date(date_time) between $1 and $2
-group by start_date
-order by start_date`;
+const getWeeklyAnalytics = `
+WITH date_series AS (
+  SELECT generate_series($1::date - INTERVAL '6 days', $1::date, '1 day')::date AS day
+)
+SELECT
+  SUBSTRING(TO_CHAR(ds.day, 'Day') FROM 1 FOR 1) AS label,
+  ds.day as start_date,
+  ds.day as end_date,
+  COALESCE(p.daytime_usage, 0) AS daytime_usage,
+  COALESCE(p.nighttime_usage, 0) AS nighttime_usage
+FROM date_series ds
+LEFT JOIN (
+  SELECT
+    DATE_TRUNC('day', date_time)::date AS day,
+    SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) AS daytime_usage,
+    SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) AS nighttime_usage
+  FROM puffs
+  WHERE date_time >= $1 - INTERVAL '6 days'
+  AND date_time < $1 + INTERVAL '1 day'
+  GROUP BY DATE_TRUNC('day', date_time)
+) p ON ds.day = p.day
+ORDER BY ds.day;
+`;
+
+const getMonthlyAnalytics = `
+WITH date_range AS (
+  SELECT DATE_TRUNC('month', $1::date)::date AS start_of_month,
+         (DATE_TRUNC('month', $1::date) + INTERVAL '1 MONTH - 1 day')::date AS end_of_month
+),
+weeks AS (
+  SELECT generate_series(start_of_month, end_of_month, '1 week'::interval)::date AS week_start,
+         LEAST(generate_series(start_of_month, end_of_month, '1 week'::interval) + INTERVAL '6 days', end_of_month)::date AS week_end
+  FROM date_range
+),
+puff_counts AS (
+  SELECT DATE_TRUNC('day', date_time)::date AS puff_day_start,
+         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
+  FROM puffs
+  WHERE date_time >= (SELECT start_of_month FROM date_range)
+    AND date_time <= (SELECT end_of_month FROM date_range)
+  GROUP BY puff_day_start
+),
+weekly_summary AS (
+  SELECT w.week_start AS start_date,
+         w.week_end AS end_date,
+         COALESCE(SUM(pc.daytimeusage), 0) AS daytime_usage,
+         COALESCE(SUM(pc.nightusage), 0) AS night_usage
+  FROM weeks w
+  LEFT JOIN puff_counts pc ON pc.puff_day_start >= w.week_start AND pc.puff_day_start <= w.week_end
+  GROUP BY w.week_start, w.week_end
+  ORDER BY w.week_start
+)
+SELECT
+  'W' || ROW_NUMBER() OVER (ORDER BY ws.start_date) AS label,
+  ws.start_date,
+  ws.end_date,
+  ws.daytime_usage,
+  ws.night_usage
+FROM weekly_summary ws;
+`;
+
+const getYearlyAnalytics = `
+WITH date_range AS (
+  SELECT DATE_TRUNC('year', $1::date)::date AS start_of_year,
+         (DATE_TRUNC('year', $1::date) + INTERVAL '1 YEAR - 1 day')::date AS end_of_year
+),
+months AS (
+  SELECT generate_series(start_of_year, end_of_year, '1 month'::interval)::date AS month_start,
+         LEAST(generate_series(start_of_year, end_of_year, '1 month'::interval) + INTERVAL '1 MONTH - 1 day', end_of_year)::date AS month_end
+  FROM date_range
+),
+puff_counts AS (
+  SELECT DATE_TRUNC('day', date_time)::date AS puff_day_start,
+         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
+  FROM puffs
+  WHERE date_time >= (SELECT start_of_year FROM date_range)
+    AND date_time <= (SELECT end_of_year FROM date_range)
+  GROUP BY puff_day_start
+)
+SELECT
+  SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 1) AS label,
+  m.month_start AS start_date,
+  m.month_end AS end_of_month,
+  COALESCE(SUM(pc.daytimeusage), 0) AS daytime_usage,
+  COALESCE(SUM(pc.nightusage), 0) AS night_usage
+FROM months m
+LEFT JOIN puff_counts pc ON pc.puff_day_start >= m.month_start AND pc.puff_day_start <= m.month_end
+GROUP BY m.month_start, m.month_end
+ORDER BY m.month_start;
+`;
 
 module.exports = {
   getAllKambuhData,
@@ -96,6 +172,8 @@ module.exports = {
   getInhalerById,
   updateKambuhCondition,
   getKambuhDataByDate,
-  getWeeklyAnalytics,
   getKambuhDataByMonth,
+  getWeeklyAnalytics,
+  getMonthlyAnalytics,
+  getYearlyAnalytics,
 };
