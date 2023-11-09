@@ -179,6 +179,10 @@ const getAnalytics = async (req, res) => {
     query = queries.getWeeklyAnalytics;
   } else if (frequency === "month") {
     query = queries.getMonthlyAnalytics;
+  } else if (frequency === "quarter") {
+    query = queries.getQuarterlyAnalytics;
+  } else if (frequency === "halfyear") {
+    query = queries.getHalfYearlyAnalytics;
   } else if (frequency === "year") {
     query = queries.getYearlyAnalytics;
   }
