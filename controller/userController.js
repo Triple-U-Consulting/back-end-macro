@@ -73,6 +73,12 @@ const addInhalertoUser = async (req, res) => {
     const token = req.headers.accesstoken;
     const { inhaler_id } = req.body;
 
+    if (inhaler_id == null) {
+      res.status(400).json({
+        message: "No inhaler id specified"
+      })
+    }
+
     const decoded = jwt_decode(token);
     const user_id = decoded.user_id;
     //console.log(user_id);
@@ -86,9 +92,9 @@ const addInhalertoUser = async (req, res) => {
     }
 
     await pool.query(queries.updateInhalerToUser, [user_id, inhaler_id]);
+
     res.status(200).json({
-      message: "Updated inhaler to user",
-      result: inhaler_id,
+      message: "Updated inhaler to user"
     });
   } catch (error) {
     console.log(error);
