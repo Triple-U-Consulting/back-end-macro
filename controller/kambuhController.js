@@ -25,6 +25,7 @@ const updateCondition = async (req, res, next) => {
     console.log(error);
     res.status(500).json({
       message: error.message,
+      error: "error mas"
     });
   }
 };
@@ -102,6 +103,20 @@ const addKambuhData = async (req, res) => {
     });
   }
 };
+
+const getKambuhDataIfScaleAndTriggerNull = async (req, res) => {
+  try {
+    const kambuhData = await pool.query(queries.getKambuhDataIfScaleAndTriggerNull);
+    if(!kambuhData.rows.length){
+      res.status(200).json({ results: [] });
+    } else {
+      res.status(200).json({ results: kambuhData.rows});
+    }
+  } catch (error) {
+    console.log("Error:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+}
 
 const getKambuhDataByDate = async (req, res) => {
   try {
@@ -191,4 +206,5 @@ module.exports = {
   getKambuhDataByDate,
   getKambuhDataByMonth,
   getAnalytics,
+  getKambuhDataIfScaleAndTriggerNull,
 };
