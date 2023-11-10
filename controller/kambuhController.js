@@ -27,7 +27,7 @@ const updateCondition = async (req, res, next) => {
     console.log(error);
     res.status(500).json({
       message: error.message,
-      error: "error mas"
+      //error: "error mas"
     });
   }
 };
