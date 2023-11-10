@@ -32,7 +32,7 @@ const getKambuhDataIfScaleAndTriggerNull =
 
 // User
 const addUserData =
-  'INSERT INTO users (email, "password", dob) VALUES ($1, $2, $3::date)';
+  'INSERT INTO users (email, "password") VALUES ($1, $2)';
 const getAllUserData = "SELECT * FROM users";
 const checkEmailExists = "SELECT email FROM users WHERE email = $1";
 const getUserDataByEmail = "SELECT * FROM users WHERE email = $1";
