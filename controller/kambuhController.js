@@ -10,7 +10,9 @@ const getKambuhData = async (req, res, next) => {
 
 const updateCondition = async (req, res, next) => {
   try {
+    console.log(req.body)
     const { allValueToUpdate } = req.body;
+    console.log(allValueToUpdate)
     allValueToUpdate.forEach((kambuh) => {
       const kambuh_id = kambuh["kambuh_id"];
       const scale = kambuh["scale"];

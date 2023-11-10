@@ -8,7 +8,7 @@ const getHomeData = async (req, res) => {
     const userId = decoded.user_id
 
     const temp = await pool.query(queries.getUserInhaler, [userId])
-    const inhalerId = temp.rows[0].inhalerId
+    const inhalerId = temp.rows[0].inhaler_id
 
     if (inhalerId == null) {
         res.status(400).json({
