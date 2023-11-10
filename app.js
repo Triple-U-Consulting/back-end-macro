@@ -12,8 +12,8 @@ const cors = require("cors");
 //const errorHandler = require('./middleware/errorHandler');
 require("dotenv").config();
 
-console.log(new Date());
-console.log(Date.now());
+// console.log(new Date());
+// console.log(Date.now());
 
 //middlewate
 app.use(morgan("dev"));
