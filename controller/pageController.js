@@ -3,7 +3,8 @@ const queries = require("./query");
 const jwt_decode = require('jwt-decode');
 
 const getHomeData = async (req, res) => {
-    const token = req.headers.accesstoken;
+    try {
+        const token = req.headers.accesstoken;
     const decoded = jwt_decode(token);
     const userId = decoded.user_id
 
@@ -27,6 +28,12 @@ const getHomeData = async (req, res) => {
             week_avg: weekAvgPuff.rows[0]["average"],
             remaining: remaining
         })
+    }
+    } catch (error) {
+        console.error("Error:", error.message);
+        res.status(500).json({
+            message: error.message,
+        });
     }
 }
 

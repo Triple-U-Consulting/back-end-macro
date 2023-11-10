@@ -10,7 +10,12 @@ const getAllPuffSinceDate =
 
 // TODO: - query logic still questionable
 const getWeekAvgPuff =
-  "SELECT CAST(COUNT(*) AS FLOAT) / EXTRACT(DAY FROM (puffs.date_time - sub.week_start)) AS average FROM puffs JOIN (SELECT DATE_TRUNC('week', date_time) AS week_start FROM puffs) AS sub ON sub.week_start = DATE_TRUNC('week', puffs.date_time) GROUP BY sub.week_start, puffs.date_time ORDER BY sub.week_start LIMIT 1";
+  `SELECT 
+    CASE
+      WHEN EXTRACT(DAY FROM (puffs.date_time - sub.week_start)) == 0 THEN CAST(COUNT(*) AS FLOAT)
+      ELSE CAST(COUNT(*) AS FLOAT) / EXTRACT(DAY FROM (puffs.date_time - sub.week_start))
+    END AS average
+  FROM puffs JOIN (SELECT DATE_TRUNC('week', date_time) AS week_start FROM puffs) AS sub ON sub.week_start = DATE_TRUNC('week', puffs.date_time) GROUP BY sub.week_start, puffs.date_time ORDER BY sub.week_start LIMIT 1`;
 
 // Kambuh
 const addKambuhData =
