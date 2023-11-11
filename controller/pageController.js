@@ -20,9 +20,9 @@ const getHomeData = async (req, res) => {
         const weekAvgPuff = await pool.query(queries.getWeekAvgPuff)
         const lastChanged = await pool.query(queries.getInhalerLastChanged, [inhalerId])
 
-        const inhalerRemaining = await pool.query(queries.getInhalerById, [inhalerId]).rows[0]["remaining_puff"]
+        const inhalerRemaining = await pool.query(queries.getInhalerById, [inhalerId])
         const allPuffSinceDate = await pool.query(queries.getAllPuffSinceDate, [lastChanged.rows[0]["change_date"]])
-        const remaining = inhalerRemaining - allPuffSinceDate.rows[0]["total"]
+        const remaining = inhalerRemaining.rows[0]["remaining_puff"] - allPuffSinceDate.rows[0]["total"]
 
         res.status(200).json({
             today: todayPuff.rows[0]["today"],
