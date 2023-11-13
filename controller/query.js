@@ -171,7 +171,7 @@ puff_counts AS (
   GROUP BY puff_day_start
 )
 SELECT
-SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 1) AS label, 
+SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 3) AS label, 
       m.month_start AS start_date,
        m.month_end AS end_date,
        COALESCE(SUM(pc.daytimeusage), 0) AS daytime_usage,
