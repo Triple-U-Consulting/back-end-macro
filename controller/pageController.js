@@ -11,8 +11,8 @@ const getHomeData = async (req, res) => {
     const temp = await pool.query(queries.getUserInhaler, [userId])
     const inhalerId = temp.rows[0].inhaler_id
 
-    if (inhalerId == null) {
-        res.status(400).json({
+    if (!inhalerId) {
+        return res.status(200).json({
             message: "No inhaler paired"
         })
     } else {
