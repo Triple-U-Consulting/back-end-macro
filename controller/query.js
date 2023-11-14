@@ -33,7 +33,7 @@ WHERE date_trunc('day', start_time::date) = date_trunc('day', $1::date)`;
 const getKambuhDataByMonth = `SELECT * FROM kambuhs
 WHERE date_trunc('month', start_time::date) = date_trunc('month', $1::date)`;
 const getKambuhDataIfScaleAndTriggerNull = 
-`SELECT * FROM kambuhs WHERE scale IS NULL OR trigger IS NULL`;
+`SELECT * FROM kambuhs WHERE scale IS NULL AND trigger IS NULL`;
 
 // User
 const addUserData =
