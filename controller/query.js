@@ -12,7 +12,7 @@ const getAllPuffSinceDate =
 const getWeekAvgPuff =
   `SELECT 
     CASE
-      WHEN EXTRACT(DAY FROM (puffs.date_time - sub.week_start)) == 0 THEN CAST(COUNT(*) AS FLOAT)
+      WHEN EXTRACT(DAY FROM (puffs.date_time - sub.week_start)) = CAST(0 AS FLOAT) THEN CAST(COUNT(*) AS FLOAT)
       ELSE CAST(COUNT(*) AS FLOAT) / EXTRACT(DAY FROM (puffs.date_time - sub.week_start))
     END AS average
   FROM puffs JOIN (SELECT DATE_TRUNC('week', date_time) AS week_start FROM puffs) AS sub ON sub.week_start = DATE_TRUNC('week', puffs.date_time) GROUP BY sub.week_start, puffs.date_time ORDER BY sub.week_start LIMIT 1`;
@@ -33,7 +33,7 @@ WHERE date_trunc('day', start_time::date) = date_trunc('day', $1::date)`;
 const getKambuhDataByMonth = `SELECT * FROM kambuhs
 WHERE date_trunc('month', start_time::date) = date_trunc('month', $1::date)`;
 const getKambuhDataIfScaleAndTriggerNull = 
-`SELECT * FROM kambuhs WHERE scale IS NULL OR trigger IS NULL`;
+`SELECT * FROM kambuhs WHERE scale IS NULL AND trigger IS NULL`;
 
 // User
 const addUserData =
@@ -140,7 +140,7 @@ puff_counts AS (
   GROUP BY puff_day_start
 )
 SELECT
-SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 1) AS label, 
+SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 3) AS label, 
       m.month_start AS start_date,
        m.month_end AS end_date,
        COALESCE(SUM(pc.daytimeusage), 0) AS daytime_usage,
@@ -171,7 +171,7 @@ puff_counts AS (
   GROUP BY puff_day_start
 )
 SELECT
-SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 1) AS label, 
+SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 3) AS label, 
       m.month_start AS start_date,
        m.month_end AS end_date,
        COALESCE(SUM(pc.daytimeusage), 0) AS daytime_usage,
@@ -202,7 +202,7 @@ puff_counts AS (
   GROUP BY puff_day_start
 )
 SELECT
-  SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 1) AS label,
+  SUBSTRING(TO_CHAR(m.month_start, 'Mon') FROM 1 FOR 3) AS label,
   m.month_start AS start_date,
   m.month_end AS end_date,
   COALESCE(SUM(pc.daytime_usage), 0) AS daytime_usage,
