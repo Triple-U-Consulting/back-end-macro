@@ -132,15 +132,24 @@ const getAllUserData = async (req, res) => {
   }
 };
 
-const mockTest = (req, res) => {
-  res.json(["profile"]);
-};
+const sendOTPVerificationEmail = async (req, res) => {
+  try {
+    const otp = `${ Math.floor(1000 + Math.random() * 9000) }`;
+    const token = req.headers.accesstoken;
+    const { email } = req.body;
+
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: error.message });
+  }
+}
 
 module.exports = {
   userRegister,
   getAllUserData,
   userLogin,
-  mockTest,
+  sendOTPVerificationEmail,
   addInhalertoUser,
   getUserDataById,
 };

@@ -32,6 +32,33 @@ const updateCondition = async (req, res, next) => {
   }
 };
 
+const addManualKambuhData = async (req, res) => {
+  try {
+    const { start_time, total_puff, scale, trigger } = req.body
+    await pool.query(queries.addManualKambuhData, [start_time, total_puff, scale, trigger]);
+    res.status(201).json({ message: "Kambuh data successfully added"});
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: error.message });
+  }
+}
+
+const deleteKambuhDataById = async (req, res) => {
+  try {
+    const kambuh_id  = req.params.kambuh_id
+    await pool.query(queries.deleteKambuhDataById, [kambuh_id]);
+
+    res.status(200).json({
+      messgae: 'Data deleted successfully'
+    });
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: error.message });
+  }
+}
+
 const getKambuhById = async (req, res, next) => {
   const id = req.params.kambuhid;
   pool.query(queries.findKambuhIdByPk, [id], (error, results) => {
@@ -44,27 +71,27 @@ const addKambuhData = async (req, res) => {
   try {
     const lastPuff = await pool.query(queries.getLastPuffResult);
     const lastPuffLast = lastPuff.rows[0];
-    const now = new Date();
-    const { inhaler_id } = req.body;
+    // const now = new Date();
+    const { start_time, inhaler_id } = req.body;
 
     let currentKambuhID = 0;
 
     if (lastPuff.rows.length > 0) {
-      const timeDiff = now - new Date(lastPuffLast.date_time);
+      const timeDiff = start_time - new Date(lastPuffLast.date_time);
       if (timeDiff <= 10000) {
         currentKambuhID = lastPuffLast.kambuh_id;
       } else {
         currentKambuhID = lastPuffLast.kambuh_id + 1;
-        await pool.query(queries.addKambuhData, [currentKambuhID, now]);
+        await pool.query(queries.addKambuhData, [currentKambuhID, start_time]);
       }
     } else {
       currentKambuhID = 1;
-      await pool.query(queries.addKambuhData, [currentKambuhID, now]);
+      await pool.query(queries.addKambuhData, [currentKambuhID, start_time]);
     }
 
     const newPuff = await pool.query(queries.addPuffData, [
       currentKambuhID,
-      now,
+      start_time,
       inhaler_id,
     ]);
 
@@ -77,16 +104,6 @@ const addKambuhData = async (req, res) => {
     currentKambuhLast.total_puff += 1;
     currentKambuhLast.kambuh_interval =
       currentKambuhLast.end_time - currentKambuhLast.start_time;
-
-    //console.log(currentKambuhLast.kambuh_interval);
-
-    // Extract to hours, minute, seconds
-    // const timeDifference = new Date(currentKambuhLast.kambuh_interval);
-    // const hours = timeDifference.getHours() - 7;
-    // const minutes = timeDifference.getMinutes();
-    // const seconds = timeDifference.getSeconds();
-    // const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    //const convertKambuhIntervalToTime = moment().format()
 
     await pool.query(queries.updateKambuh, [
       currentKambuhLast.end_time,
@@ -209,4 +226,6 @@ module.exports = {
   getKambuhDataByMonth,
   getAnalytics,
   getKambuhDataIfScaleAndTriggerNull,
+  deleteKambuhDataById,
+  addManualKambuhData
 };
