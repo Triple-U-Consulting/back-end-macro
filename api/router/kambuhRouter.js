@@ -7,8 +7,13 @@ router.get("/kambuh", controller.getKambuhData);
 router.get("/puff", controller.getPuffData);
 router.get("/kambuh/date", controller.getKambuhDataByDate);
 router.get("/kambuh/month", controller.getKambuhDataByMonth);
-router.get("/kambuh/scale-trigger/null", controller.getKambuhDataIfScaleAndTriggerNull);
+router.get(
+  "/kambuh/scale-trigger/null",
+  controller.getKambuhDataIfScaleAndTriggerNull
+);
 router.get("/analytics", controller.getAnalytics);
+router.get("/summary", controller.getSummaryAnalytics);
+
 // router.get("/inhalers", controller.getInhalersData);
 
 /* POST Method */
