@@ -21,7 +21,7 @@ const getWeekAvgPuff =
 const addKambuhData =
   "INSERT INTO kambuhs (kambuh_id, start_time)  VALUES ($1 ,$2::timestamp)";
 const addManualKambuhData =
-`INSERT INTO kambuhs (start_time, total_puff, scale, trigger)  VALUES ($1::timestamp ,$2, $3, $4)`;
+`INSERT INTO kambuhs (start_time, total_puff, scale, trigger)  VALUES ($1::timestamp, $2, $3, $4)`;
 const getAllKambuhData = "SELECT * FROM kambuhs";
 const getKambuhById = "SELECT * FROM kambuhs WHERE kambuhid = $1";
 const findKambuhIdByPk = "SELECT * FROM kambuhs WHERE kambuh_id = $1";
@@ -255,5 +255,5 @@ module.exports = {
   getYearlyAnalytics,
   getKambuhDataIfScaleAndTriggerNull,
   deleteKambuhDataById,
-  addManualKambuhData
+  addManualKambuhData,
 };

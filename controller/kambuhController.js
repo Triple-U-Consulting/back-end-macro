@@ -71,27 +71,27 @@ const addKambuhData = async (req, res) => {
   try {
     const lastPuff = await pool.query(queries.getLastPuffResult);
     const lastPuffLast = lastPuff.rows[0];
-    // const now = new Date();
-    const { start_time, inhaler_id } = req.body;
+    const now = new Date();
+    const {inhaler_id} = req.body;
 
     let currentKambuhID = 0;
 
     if (lastPuff.rows.length > 0) {
-      const timeDiff = start_time - new Date(lastPuffLast.date_time);
+      const timeDiff = now - new Date(lastPuffLast.date_time);
       if (timeDiff <= 10000) {
         currentKambuhID = lastPuffLast.kambuh_id;
       } else {
         currentKambuhID = lastPuffLast.kambuh_id + 1;
-        await pool.query(queries.addKambuhData, [currentKambuhID, start_time]);
+        await pool.query(queries.addKambuhData, [currentKambuhID, now]);
       }
     } else {
       currentKambuhID = 1;
-      await pool.query(queries.addKambuhData, [currentKambuhID, start_time]);
+      await pool.query(queries.addKambuhData, [currentKambuhID, now]);
     }
 
     const newPuff = await pool.query(queries.addPuffData, [
       currentKambuhID,
-      start_time,
+      now,
       inhaler_id,
     ]);
 
@@ -159,10 +159,8 @@ const getKambuhDataByDate = async (req, res) => {
 const getKambuhDataByMonth = async (req, res) => {
   try {
     const date = req.query.date;
-    //let currentDate = date.toJSON().slice(0, 10);
-    console.log(date);
     const kambuhData = await pool.query(queries.getKambuhDataByMonth, [date]);
-    console.log(kambuhData.rows);
+
     if (!kambuhData.rows.length) {
       return res.status(200).json({ results: [] });
     }
@@ -216,6 +214,24 @@ const getAnalytics = async (req, res) => {
   }
 };
 
+const getQuarterKambuhData = async (req, res) => {
+  try {
+    const startDate = req.query.start_date;
+
+    if(!startDate){
+      return res.status(400).json({ message: 'Harap tentukan tanggal awal' });
+    } 
+
+    const analyticsData = await pool.query(queries.getQuarterlyAnalytics, [startDate]);
+    console.log(analyticsData.rows);
+    res.status(200).json({ message: analyticsData.rows})
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   getKambuhData,
   getKambuhById,
@@ -227,5 +243,6 @@ module.exports = {
   getAnalytics,
   getKambuhDataIfScaleAndTriggerNull,
   deleteKambuhDataById,
-  addManualKambuhData
+  addManualKambuhData,
+  getQuarterKambuhData
 };

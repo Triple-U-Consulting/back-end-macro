@@ -30,6 +30,8 @@ app.use(cookieParser());
 //     next();
 // });
 
+console.log(Date.now());
+
 //router
 app.use("/page", pageRouter);
 app.use("/data", kambuhRouter);

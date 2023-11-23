@@ -73,8 +73,17 @@ const addInhalertoUser = async (req, res) => {
     const token = req.headers.accesstoken;
     const { inhaler_id } = req.body;
 
-    if (inhaler_id == null) {
-      res.status(400).json({
+    if (!inhaler_id) {
+      return res.status(400).json({
+        message: "Inhaler id is empty"
+      })
+    } 
+
+    const inhaler = await pool.query(queries.getInhalerById, [inhaler_id]);
+    const inhalerIdFromDb = inhaler.rows[0].inhaler_id;
+
+    if (inhaler_id != inhalerIdFromDb){
+      return res.status(400).json({
         message: "No inhaler id specified"
       })
     }
