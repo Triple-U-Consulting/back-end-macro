@@ -230,6 +230,11 @@ const getQuarterKambuhData = async (req, res) => {
     const analyticsData = await pool.query(queries.getQuarterlyAnalytics, [startDate]);
     console.log(analyticsData.rows);
     res.status(200).json({ message: analyticsData.rows})
+  } catch(error){
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+}
 
 const getSummaryAnalytics = async (req, res, next) => {
   const startDate = req.query.start_date;
@@ -243,7 +248,7 @@ const getSummaryAnalytics = async (req, res, next) => {
     res.status(500).json({ message: error.message });
   }
 }
-};
+
 
 module.exports = {
   getKambuhData,
@@ -257,6 +262,6 @@ module.exports = {
   getKambuhDataIfScaleAndTriggerNull,
   deleteKambuhDataById,
   addManualKambuhData,
-  getQuarterKambuhData
-  getSummaryAnalytics,
+  getQuarterKambuhData,
+  getSummaryAnalytics
 };
