@@ -73,7 +73,7 @@ LEFT JOIN (
   SELECT
     DATE_TRUNC('day', start_time)::date AS day,
     SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN total_puff ELSE 0 END) AS daytime_usage,
-    SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN total_puff ELSE 0 END) AS night_usage
+    SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN total_puff ELSE 0 END) AS night_usage
   FROM kambuhs
   WHERE start_time >= $1 - INTERVAL '6 days'
   AND start_time < $1 + INTERVAL '1 day'
