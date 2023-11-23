@@ -18,11 +18,12 @@ const getWeekAvgPuff = `SELECT
 
 // Kambuh
 const addKambuhData =
-  "INSERT INTO kambuhs (kambuh_id, start_time)  VALUES ($1 ,$2::timestamp)";
+  "INSERT INTO kambuhs (start_time)  VALUES ($1::timestamp)";
 const addManualKambuhData =
 `INSERT INTO kambuhs (start_time, total_puff, "scale", "trigger")  VALUES ($1::timestamp, $2, $3, $4)`;
 const getAllKambuhData = "SELECT * FROM kambuhs";
 const getKambuhById = "SELECT * FROM kambuhs WHERE kambuhid = $1";
+const getLatestKambuh = "SELECT * FROM kambuhs ORDER BY kambuh_id DESC LIMIT 1"
 const findKambuhIdByPk = "SELECT * FROM kambuhs WHERE kambuh_id = $1";
 const updateKambuh =
   "UPDATE kambuhs SET end_time = $1, total_puff = $2, kambuh_interval = $3 WHERE kambuh_id = $4";
@@ -280,6 +281,7 @@ module.exports = {
   findKambuhIdByPk,
   updateKambuh,
   updateKambuhCondition,
+  getLatestKambuh,
   addUserData,
   getAllUserData,
   checkEmailExists,

@@ -77,20 +77,19 @@ const addKambuhData = async (req, res) => {
     const now = new Date();
     const {inhaler_id} = req.body;
 
-    let currentKambuhID = 0;
+    var currentKambuhID = 0
 
     if (lastPuff.rows.length > 0) {
       const timeDiff = now - new Date(lastPuffLast.date_time);
-      if (timeDiff <= 10000) {
-        currentKambuhID = lastPuffLast.kambuh_id;
-      } else {
-        currentKambuhID = lastPuffLast.kambuh_id + 1;
-        await pool.query(queries.addKambuhData, [currentKambuhID, now]);
+      if (timeDiff > 10000) {
+        await pool.query(queries.addKambuhData, [now]);
       }
     } else {
-      currentKambuhID = 1;
-      await pool.query(queries.addKambuhData, [currentKambuhID, now]);
+      await pool.query(queries.addKambuhData, [now]);
     }
+    // get the newest kambuh entry
+    const currentKambuh = await pool.query(queries.getLatestKambuh);
+    const currentKambuhID = currentKambuh.rows[0]["kambuh_id"]
 
     const newPuff = await pool.query(queries.addPuffData, [
       currentKambuhID,
@@ -98,15 +97,11 @@ const addKambuhData = async (req, res) => {
       inhaler_id,
     ]);
 
-    // update row
-    const currentKambuh = await pool.query(queries.findKambuhIdByPk, [
-      currentKambuhID,
-    ]);
     const currentKambuhLast = currentKambuh.rows[0];
     currentKambuhLast.end_time = new Date();
     currentKambuhLast.total_puff += 1;
     currentKambuhLast.kambuh_interval =
-      currentKambuhLast.end_time - currentKambuhLast.start_time;
+    currentKambuhLast.end_time - currentKambuhLast.start_time;
 
     await pool.query(queries.updateKambuh, [
       currentKambuhLast.end_time,
