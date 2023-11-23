@@ -93,12 +93,12 @@ weeks AS (
   FROM date_range
 ),
 puff_counts AS (
-  SELECT DATE_TRUNC('day', date_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
-  FROM puffs
-  WHERE date_time >= (SELECT start_of_month FROM date_range)
-    AND date_time <= (SELECT end_of_month FROM date_range)
+  SELECT DATE_TRUNC('day', start_time)::date AS puff_day_start,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
+  FROM kambuhs
+  WHERE start_time >= (SELECT start_of_month FROM date_range)
+    AND start_time <= (SELECT end_of_month FROM date_range)
   GROUP BY puff_day_start
 ),
 weekly_summary AS (
@@ -131,12 +131,12 @@ months AS (
   FROM date_range
 ),
 puff_counts AS (
-  SELECT DATE_TRUNC('day', date_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
-  FROM puffs
-  WHERE date_time >= (SELECT start_of_year FROM date_range)
-    AND date_time <= (SELECT end_of_year FROM date_range)
+  SELECT DATE_TRUNC('day', start_time)::date AS puff_day_start,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
+  FROM kambuhs
+  WHERE start_time >= (SELECT start_of_year FROM date_range)
+    AND start_time <= (SELECT end_of_year FROM date_range)
   GROUP BY puff_day_start
 )
 SELECT
@@ -162,12 +162,12 @@ months AS (
   FROM date_range
 ),
 puff_counts AS (
-  SELECT DATE_TRUNC('day', date_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
-  FROM puffs
-  WHERE date_time >= (SELECT start_of_year FROM date_range)
-    AND date_time <= (SELECT end_of_year FROM date_range)
+  SELECT DATE_TRUNC('day', start_time)::date AS puff_day_start,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
+  FROM kambuhs
+  WHERE start_time >= (SELECT start_of_year FROM date_range)
+    AND start_time <= (SELECT end_of_year FROM date_range)
   GROUP BY puff_day_start
 )
 SELECT
@@ -193,12 +193,12 @@ months AS (
   FROM date_range
 ),
 puff_counts AS (
-  SELECT DATE_TRUNC('day', date_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytime_usage,
-         SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as night_usage
-  FROM puffs
-  WHERE date_time >= (SELECT start_of_year FROM date_range)
-    AND date_time <= (SELECT end_of_year FROM date_range)
+  SELECT DATE_TRUNC('day', start_time)::date AS puff_day_start,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytime_usage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as night_usage
+  FROM kambuhs
+  WHERE start_time >= (SELECT start_of_year FROM date_range)
+    AND start_time <= (SELECT end_of_year FROM date_range)
   GROUP BY puff_day_start
 )
 SELECT
