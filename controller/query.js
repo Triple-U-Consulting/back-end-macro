@@ -19,11 +19,10 @@ const getWeekAvgPuff = `SELECT
 // Kambuh
 const addKambuhData =
   "INSERT INTO kambuhs (start_time)  VALUES ($1::timestamp)";
-const addManualKambuhData =
-`INSERT INTO kambuhs (start_time, total_puff, "scale", "trigger")  VALUES ($1::timestamp, $2, $3, $4)`;
+const addManualKambuhData = `INSERT INTO kambuhs (start_time, total_puff, "scale", "trigger")  VALUES ($1::timestamp, $2, $3, $4)`;
 const getAllKambuhData = "SELECT * FROM kambuhs";
 const getKambuhById = "SELECT * FROM kambuhs WHERE kambuhid = $1";
-const getLatestKambuh = "SELECT * FROM kambuhs ORDER BY kambuh_id DESC LIMIT 1"
+const getLatestKambuh = "SELECT * FROM kambuhs ORDER BY kambuh_id DESC LIMIT 1";
 const findKambuhIdByPk = "SELECT * FROM kambuhs WHERE kambuh_id = $1";
 const updateKambuh =
   "UPDATE kambuhs SET end_time = $1, total_puff = $2, kambuh_interval = $3 WHERE kambuh_id = $4";
@@ -72,13 +71,13 @@ SELECT
 FROM date_series ds
 LEFT JOIN (
   SELECT
-    DATE_TRUNC('day', date_time)::date AS day,
-    SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) AS daytime_usage,
-    SUM(CASE WHEN EXTRACT(HOUR FROM date_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) AS night_usage
-  FROM puffs
-  WHERE date_time >= $1 - INTERVAL '6 days'
-  AND date_time < $1 + INTERVAL '1 day'
-  GROUP BY DATE_TRUNC('day', date_time)
+    DATE_TRUNC('day', start_time)::date AS day,
+    SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN total_puff ELSE 0 END) AS daytime_usage,
+    SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM date_time) BETWEEN 0 AND 6 THEN total_puff ELSE 0 END) AS night_usage
+  FROM kambuhs
+  WHERE start_time >= $1 - INTERVAL '6 days'
+  AND start_time < $1 + INTERVAL '1 day'
+  GROUP BY DATE_TRUNC('day', start_time)
 ) p ON ds.day = p.day
 ORDER BY ds.day;
 `;
