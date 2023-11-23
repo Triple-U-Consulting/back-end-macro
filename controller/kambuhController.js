@@ -77,8 +77,6 @@ const addKambuhData = async (req, res) => {
     const now = new Date();
     const {inhaler_id} = req.body;
 
-    var currentKambuhID = 0
-
     if (lastPuff.rows.length > 0) {
       const timeDiff = now - new Date(lastPuffLast.date_time);
       if (timeDiff > 10000) {
