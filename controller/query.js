@@ -94,7 +94,7 @@ weeks AS (
 ),
 puff_counts AS (
   SELECT DATE_TRUNC('day', start_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN total_puff ELSE 0 END) as daytimeusage,
          SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
   FROM kambuhs
   WHERE start_time >= (SELECT start_of_month FROM date_range)
@@ -132,7 +132,7 @@ months AS (
 ),
 puff_counts AS (
   SELECT DATE_TRUNC('day', start_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN total_puff ELSE 0 END) as daytimeusage,
          SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
   FROM kambuhs
   WHERE start_time >= (SELECT start_of_year FROM date_range)
@@ -163,7 +163,7 @@ months AS (
 ),
 puff_counts AS (
   SELECT DATE_TRUNC('day', start_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytimeusage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN total_puff ELSE 0 END) as daytimeusage,
          SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as nightusage
   FROM kambuhs
   WHERE start_time >= (SELECT start_of_year FROM date_range)
@@ -194,7 +194,7 @@ months AS (
 ),
 puff_counts AS (
   SELECT DATE_TRUNC('day', start_time)::date AS puff_day_start,
-         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN 1 ELSE 0 END) as daytime_usage,
+         SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 7 AND 20 THEN total_puff ELSE 0 END) as daytime_usage,
          SUM(CASE WHEN EXTRACT(HOUR FROM start_time) BETWEEN 21 AND 23 OR EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 6 THEN 1 ELSE 0 END) as night_usage
   FROM kambuhs
   WHERE start_time >= (SELECT start_of_year FROM date_range)
