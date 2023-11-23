@@ -10,9 +10,9 @@ const getKambuhData = async (req, res, next) => {
 
 const updateCondition = async (req, res, next) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     const { allValueToUpdate } = req.body;
-    console.log(allValueToUpdate)
+    console.log(allValueToUpdate);
     allValueToUpdate.forEach((kambuh) => {
       const kambuh_id = kambuh["kambuh_id"];
       const scale = kambuh["scale"];
@@ -34,30 +34,33 @@ const updateCondition = async (req, res, next) => {
 
 const addManualKambuhData = async (req, res) => {
   try {
-    const { start_time, total_puff, scale, trigger } = req.body
-    await pool.query(queries.addManualKambuhData, [start_time, total_puff, scale, trigger]);
-    res.status(201).json({ message: "Kambuh data successfully added"});
-
+    const { start_time, total_puff, scale, trigger } = req.body;
+    await pool.query(queries.addManualKambuhData, [
+      start_time,
+      total_puff,
+      scale,
+      trigger,
+    ]);
+    res.status(201).json({ message: "Kambuh data successfully added" });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 const deleteKambuhDataById = async (req, res) => {
   try {
-    const kambuh_id  = req.params.kambuh_id
+    const kambuh_id = req.params.kambuh_id;
     await pool.query(queries.deleteKambuhDataById, [kambuh_id]);
 
     res.status(200).json({
-      messgae: 'Data deleted successfully'
+      messgae: "Data deleted successfully",
     });
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 const getKambuhById = async (req, res, next) => {
   const id = req.params.kambuhid;
@@ -125,17 +128,19 @@ const addKambuhData = async (req, res) => {
 
 const getKambuhDataIfScaleAndTriggerNull = async (req, res) => {
   try {
-    const kambuhData = await pool.query(queries.getKambuhDataIfScaleAndTriggerNull);
-    if(!kambuhData.rows.length){
+    const kambuhData = await pool.query(
+      queries.getKambuhDataIfScaleAndTriggerNull
+    );
+    if (!kambuhData.rows.length) {
       res.status(200).json({ results: [] });
     } else {
-      res.status(200).json({ results: kambuhData.rows});
+      res.status(200).json({ results: kambuhData.rows });
     }
   } catch (error) {
     console.log("Error:", error.message);
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 const getKambuhDataByDate = async (req, res) => {
   try {
@@ -226,11 +231,19 @@ const getQuarterKambuhData = async (req, res) => {
     console.log(analyticsData.rows);
     res.status(200).json({ message: analyticsData.rows})
 
+const getSummaryAnalytics = async (req, res, next) => {
+  const startDate = req.query.start_date;
+  query = queries.summaryAnalytics;
+  try {
+    const summaryData = await pool.query(query, [startDate]);
+    console.log(summaryData.rows);
+    res.json({ results: summaryData.rows });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
   }
 }
+};
 
 module.exports = {
   getKambuhData,
@@ -245,4 +258,5 @@ module.exports = {
   deleteKambuhDataById,
   addManualKambuhData,
   getQuarterKambuhData
+  getSummaryAnalytics,
 };
